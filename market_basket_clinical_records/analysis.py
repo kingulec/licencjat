@@ -1,14 +1,10 @@
-import arules
 import pandas
-import numpy
 from matplotlib import pyplot as plt
-import plotly.express as px
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
-import arulesviz
 import tools
 from decimal import Decimal
-#import plotly.express as px
+import operator
 
 
 def load_data(path='..\market_basket_clinical_records\modified_dataset.csv'):
@@ -80,15 +76,29 @@ def market_basket_analysis(T, alpha):
             continue
         elif int(lift_col[num]) > 1:
             no_filter += 1
-            print(f"lift({set(antecedents_col[num])}"
-                  f"=>{set(consequent_col[num])})="
-                  f"{Decimal(lift_col[num])}")
             dictionary = {'lift': lift_col[num],
                           'support': support_col[num],
-                          'antecedents_col': antecedents_col[num],
-                          'consequents_col': consequent_col[num]}
+                          'antecedents': set(antecedents_col[num]),
+                          'consequents': set(consequent_col[num])}
             filter_rules.append(dictionary)
     print(f"\nNumber of rules with lift greater than 1: {no_filter}")
+    sort_apriori_rules(filter_rules, 'lift')
+
+
+def sort_apriori_rules(rules_list, rule_name):
+    """
+
+    @param rules_list
+    @param rule_name
+    """
+    sorted_dict_list = sorted(rules_list, key=operator.itemgetter(rule_name), reverse=True)
+    keys = sorted_dict_list[0].keys()
+    values = []
+    for dictionary in sorted_dict_list:
+        values.append(list(dictionary.values()))
+
+    sorted_rules_set = pandas.DataFrame(data=values, columns=keys)
+    print(sorted_rules_set[['lift', 'antecedents', 'consequents']].head(10))
 
 
 def main():
