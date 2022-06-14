@@ -1,9 +1,12 @@
+"""
+Market basket analysis script for
+heart failure dataset
+"""
 import pandas
 from matplotlib import pyplot as plt
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import association_rules
 import tools
-from decimal import Decimal
 import operator
 
 
@@ -26,7 +29,7 @@ def load_data(path='..\market_basket_clinical_records\modified_dataset.csv'):
 
 def frequenty_plot(dataset):
     """
-    Creates items (elements) frequenty plot
+    Creates items (elements) frequency plot
 
     @param dataset Pandas dataframe
     """
@@ -44,11 +47,12 @@ def frequenty_plot(dataset):
 
 def market_basket_analysis(T, alpha):
     """
+    This function analyze dataset T and counts apriori rules.
+    Then apriori rules are sorted and printed.
+    It prints the most frequent items and the strongest apriori rules.
 
-    @param T
+    @param T The dataset to analysis
     @param alpha Minimal support value (in %)
-
-    @return
     """
     freq_items = apriori(T, min_support=alpha,
                          use_colnames=True)
@@ -68,6 +72,7 @@ def market_basket_analysis(T, alpha):
     antecedents_col = apriori_rules['antecedents']
     consequent_col = apriori_rules['consequents']
     support_col = apriori_rules['support']
+    confidence = apriori_rules['confidence']
     no_filter = 0
     for num in range(0, len(lift_col)):
         if int(lift_col[num]) == 1:
@@ -78,18 +83,27 @@ def market_basket_analysis(T, alpha):
             no_filter += 1
             dictionary = {'lift': lift_col[num],
                           'support': support_col[num],
+                          'confidence': confidence[num],
                           'antecedents': set(antecedents_col[num]),
                           'consequents': set(consequent_col[num])}
             filter_rules.append(dictionary)
     print(f"\nNumber of rules with lift greater than 1: {no_filter}")
+    # print 10 rules with best lift
     sort_apriori_rules(filter_rules, 'lift')
+    print("rules with best support")
+    # print 10 rules with best support
+    sort_apriori_rules(filter_rules, 'support')
+    #  print 10 rules with best confidence
+    sort_apriori_rules(filter_rules, 'confidence')
 
 
 def sort_apriori_rules(rules_list, rule_name):
     """
+    Sort apriori rules from largest to smallest
+    and prints 10 strengths rules.
 
-    @param rules_list
-    @param rule_name
+    @param rules_list List with apriori rules (list[dict])
+    @param rule_name Name of rule to sort by
     """
     sorted_dict_list = sorted(rules_list, key=operator.itemgetter(rule_name), reverse=True)
     keys = sorted_dict_list[0].keys()
@@ -102,10 +116,13 @@ def sort_apriori_rules(rules_list, rule_name):
 
 
 def main():
+    """
+    The main function
+    """
     dataset = load_data()
     market_basket_analysis(dataset, 0.04)
 
-    # frequenty_plot(dataset)
+    frequenty_plot(dataset)
 
 
 if __name__ == '__main__':
