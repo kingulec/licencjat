@@ -25,7 +25,7 @@ def count_freq(dataset):
     """
     Counts the frequency of appearance items (elements)
 
-    @param dataset Two dementional list in form [[List of items names],[1 or 0 values]]
+    @param dataset Two-dimensional list in form [[List of items names],[1 or 0 values]]
 
     @return Dictionary with keys
     """
@@ -39,5 +39,4 @@ def count_freq(dataset):
                 freq += 1
         dictionary[col_names[i]] = freq
     return dictionary
-
 
