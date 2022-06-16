@@ -69,8 +69,8 @@ def market_basket_analysis(T, alpha):
     filter_rules = []
     print(apriori_rules)
     lift_col = apriori_rules['lift']
-    antecedents_col = apriori_rules['antecedent']
-    consequent_col = apriori_rules['consequent']
+    antecedents_col = apriori_rules['antecedents']
+    consequent_col = apriori_rules['consequents']
     support_col = apriori_rules['support']
     confidence = apriori_rules['confidence']
     no_filter = 0
@@ -114,13 +114,13 @@ def sort_apriori_rules(rules_list, rule_name, item=None, head=10):
     keys = sorted_dict_list[0].keys()
     values = []
     for dictionary in sorted_dict_list:
-        if item is not None and item in dictionary['consequents']:
+        if item is not None and item in dictionary['consequent']:
             values.append(list(dictionary.values()))
         elif item is None:
             values.append(list(dictionary.values()))
 
     sorted_rules_set = pandas.DataFrame(data=values, columns=keys)
-    print(sorted_rules_set[['lift', 'antecedents', 'consequents']].head(head), '\n')
+    print(sorted_rules_set[['lift', 'antecedent', 'consequent']].head(head), '\n')
 
 
 def main():
