@@ -67,7 +67,6 @@ def market_basket_analysis(T, alpha):
     print(apriori_rules.head())
     # Filter rules with lift greater than 1
     filter_rules = []
-    print(apriori_rules)
     lift_col = apriori_rules['lift']
     antecedents_col = apriori_rules['antecedents']
     consequent_col = apriori_rules['consequents']
@@ -75,18 +74,14 @@ def market_basket_analysis(T, alpha):
     confidence = apriori_rules['confidence']
     no_filter = 0
     for num in range(0, len(lift_col)):
-        if int(lift_col[num]) == 1:
-            continue
-        elif int(lift_col[num]) < 1:
-            continue
-        elif int(lift_col[num]) > 1:
+        if int(lift_col[num]) > 1:
             no_filter += 1
-            dictionary = {'lift': lift_col[num],
+            dic = {'lift': lift_col[num],
                           'support': support_col[num],
                           'confidence': confidence[num],
                           'antecedent': set(antecedents_col[num]),
                           'consequent': set(consequent_col[num])}
-            filter_rules.append(dictionary)
+            filter_rules.append(dic)
     print(f"\nNumber of rules with lift greater than 1:"
           f" {no_filter}\n10 rules with best lift:\n")
     sort_apriori_rules(filter_rules, 'lift')
@@ -96,9 +91,11 @@ def market_basket_analysis(T, alpha):
     sort_apriori_rules(filter_rules, 'confidence')
     print("5 rules with best lift and 'śmierć' item in consequent set")
     sort_apriori_rules(filter_rules, 'confidence', 'śmierć', 5)
+    print("5 rules with best lift:\n")
+    sort_apriori_rules(filter_rules, 'lift', 'płeć', 5, 'antecedent')
 
 
-def sort_apriori_rules(rules_list, rule_name, item=None, head=10):
+def sort_apriori_rules(rules_list, rule_name, item=None, head=10, cons='consequent'):
     """
     Sort apriori rules from largest to smallest
     and prints 10 strengths rules.
@@ -109,18 +106,19 @@ def sort_apriori_rules(rules_list, rule_name, item=None, head=10):
     @param rule_name Name of rule to sort by
     @param item Name of item from consequent set
     @param head Number of rules to show
+    @param cons
     """
     sorted_dict_list = sorted(rules_list, key=operator.itemgetter(rule_name), reverse=True)
     keys = sorted_dict_list[0].keys()
     values = []
     for dictionary in sorted_dict_list:
-        if item is not None and item in dictionary['consequent']:
+        if item is not None and item in dictionary[cons]:
             values.append(list(dictionary.values()))
         elif item is None:
             values.append(list(dictionary.values()))
 
     sorted_rules_set = pandas.DataFrame(data=values, columns=keys)
-    print(sorted_rules_set[['lift', 'antecedent', 'consequent']].head(head), '\n')
+    print(sorted_rules_set[[rule_name, 'antecedent', 'consequent']].head(head), '\n')
 
 
 def main():
