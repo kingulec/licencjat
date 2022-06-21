@@ -77,10 +77,10 @@ def market_basket_analysis(T, alpha):
         if int(lift_col[num]) > 1:
             no_filter += 1
             dic = {'lift': lift_col[num],
-                          'support': support_col[num],
-                          'confidence': confidence[num],
-                          'antecedent': set(antecedents_col[num]),
-                          'consequent': set(consequent_col[num])}
+                   'support': support_col[num],
+                   'confidence': confidence[num],
+                   'antecedent': set(antecedents_col[num]),
+                   'consequent': set(consequent_col[num])}
             filter_rules.append(dic)
     print(f"\nNumber of rules with lift greater than 1:"
           f" {no_filter}\n10 rules with best lift:\n")
@@ -89,7 +89,7 @@ def market_basket_analysis(T, alpha):
     sort_apriori_rules(filter_rules, 'support')
     print("10 rules with best confidence:\n")
     sort_apriori_rules(filter_rules, 'confidence')
-    print("5 rules with best lift and 'śmierć' item in consequent set")
+    print("5 rules with best confidence and 'śmierć' item in consequent set")
     sort_apriori_rules(filter_rules, 'confidence', 'śmierć', 5)
     print("5 rules with best lift:\n")
     sort_apriori_rules(filter_rules, 'lift', 'płeć', 5, 'antecedent')
